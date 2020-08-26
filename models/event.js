@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { EVENT_MODEL_NAME, USER_MODEL_NAME } = require('./constants');
+const constants = require('./constants');
 
 const eventSchema = new mongoose.Schema({
   title: {
@@ -20,8 +20,8 @@ const eventSchema = new mongoose.Schema({
   },
   creator: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: USER_MODEL_NAME,
+    ref: constants.USER_MODEL_NAME,
   },
 });
 
-module.exports = mongoose.Model(EVENT_MODEL_NAME, eventSchema);
+module.exports = mongoose.model(constants.EVENT_MODEL_NAME, eventSchema);
