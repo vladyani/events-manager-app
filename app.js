@@ -85,6 +85,16 @@ app.use(
 
       createUser: async (args) => {
         try {
+          const maybeUser = await UserModel.findOne({
+            email: args.userInput.email,
+          });
+
+          console.log(maybeUser, 'boom!');
+
+          if (maybeUser) {
+            throw new Error('This e-mail address is already registered!');
+          }
+
           const hashedPassword = await bcrypt.hash(args.userInput.password, 12);
 
           const result = await new UserModel({
@@ -92,9 +102,9 @@ app.use(
             password: hashedPassword,
           }).save();
 
-          return { ...result._doc.email, password: null };
+          return result._doc;
         } catch (error) {
-          console.log(error);
+          throw new Error(error.message);
         }
       },
     },
