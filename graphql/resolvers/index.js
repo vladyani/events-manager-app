@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const EventModel = require('../../models/event');
 const UserModel = require('../../models/user');
 const BookingModel = require('../../models/booking');
+const { dateToISOString } = require('../../utils/date');
 
 const getUser = async (userId) => {
   const user = await UserModel.findById(userId);
@@ -18,7 +19,7 @@ const getEvents = async (eventIds) => {
 
   events.map((event) => ({
     ...event._doc,
-    createdAt: new Date(event._doc.createdAt).toISOString(),
+    createdAt: dateToISOString(event._doc.createdAt),
     creator: getUser.bind(this, event._doc.creator),
   }));
 
@@ -36,15 +37,15 @@ const getEvent = async (eventId) => {
 
 const makeEvent = (event) => ({
   ...event._doc,
-  createdAt: new Date(event._doc.createdAt).toISOString(),
+  createdAt: dateToISOString(event._doc.createdAt),
   creator: getUser.bind(this, event._doc.creator),
 });
 
 const makeBooking = (booking) => ({
   ...booking._doc,
-  createdAt: new Date(booking._doc.createdAt).toISOString(),
+  createdAt: dateToISOString(booking._doc.createdAt),
   event: getEvent.bind(this, booking._doc.event),
-  updatedAt: new Date(booking._doc.updatedAt).toISOString(),
+  updatedAt: dateToISOString(booking._doc.updatedAt),
   user: getUser.bind(this, booking._doc.user),
 });
 
