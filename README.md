@@ -13,6 +13,7 @@ npm run start
 ```
 
 Server is running on `http://localhost:3000/`
+GraphQL playground is running on `http://localhost:3000/graphql`
 
 GraphQL playground is running on `http://localhost:3000/graphql`
 
