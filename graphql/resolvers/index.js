@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 
 const EventModel = require('../../models/event');
 const UserModel = require('../../models/user');
+const BookingModel = require('../../models/booking');
 
 const getUser = async (userId) => {
   const user = await UserModel.findById(userId);
@@ -24,13 +25,39 @@ const getEvents = async (eventIds) => {
   return events;
 };
 
+const getEvent = async (eventId) => {
+  const event = await EventModel.findById(eventId);
+
+  return {
+    ...event._doc,
+    creator: getUser.bind(this, event._doc.creator),
+  };
+};
+
 const makeEvent = (event) => ({
   ...event._doc,
   createdAt: new Date(event._doc.createdAt).toISOString(),
   creator: getUser.bind(this, event._doc.creator),
 });
 
+const makeBooking = (booking) => ({
+  ...booking._doc,
+  createdAt: new Date(booking._doc.createdAt).toISOString(),
+  event: getEvent.bind(this, booking._doc.event),
+  updatedAt: new Date(booking._doc.updatedAt).toISOString(),
+  user: getUser.bind(this, booking._doc.user),
+});
+
 module.exports = {
+  bookings: async () => {
+    try {
+      const bookings = await BookingModel.find();
+      return bookings.map(makeBooking);
+    } catch (error) {
+      throw new Error('Bookings not found!');
+    }
+  },
+
   events: async () => {
     try {
       const events = await EventModel.find();
@@ -50,11 +77,11 @@ module.exports = {
       }
 
       const event = await new EventModel({
-        title: args.eventInput.title,
-        description: args.eventInput.description,
-        price: args.eventInput.price,
         createdAt: args.eventInput.createdAt,
         creator: maybeUser._id,
+        description: args.eventInput.description,
+        price: args.eventInput.price,
+        title: args.eventInput.title,
       }).save();
 
       const createdEvent = await event.save();
@@ -87,6 +114,39 @@ module.exports = {
       }).save();
 
       return user._doc;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
+
+  createBooking: async (args) => {
+    try {
+      const event = await EventModel.findOne({
+        _id: args.eventId,
+      });
+
+      const booking = await new BookingModel({
+        user: '5f465dedac36aa458246314b',
+        event,
+      }).save();
+
+      return makeBooking(booking);
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
+
+  cancelBooking: async (args) => {
+    try {
+      const booking = await BookingModel.findOne({
+        _id: args.bookingId,
+      }).populate('event');
+
+      const event = makeEvent(booking.event);
+
+      await BookingModel.deleteOne({ _id: args.bookingId });
+
+      return event;
     } catch (error) {
       throw new Error(error.message);
     }
