@@ -13,9 +13,13 @@ module.exports = {
     }
   },
 
-  createEvent: async (args) => {
+  createEvent: async (args, req) => {
+    if (!req.isAuthenticated) {
+      throw new Error('Unauthenticated!');
+    }
+
     try {
-      const maybeUser = await UserModel.findById('5f465dedac36aa458246314b');
+      const maybeUser = await UserModel.findById(req.userId);
 
       if (!maybeUser) {
         throw new Error('User not found!');

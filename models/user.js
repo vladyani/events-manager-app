@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const constants = require('./constants');
+const config = require('../config');
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -13,9 +13,9 @@ const userSchema = new mongoose.Schema({
   createdEvents: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: constants.EVENT_MODEL_NAME,
+      ref: config.EVENT_MODEL_NAME,
     },
   ],
 });
 
-module.exports = mongoose.model(constants.USER_MODEL_NAME, userSchema);
+module.exports = mongoose.model(config.USER_MODEL_NAME, userSchema);

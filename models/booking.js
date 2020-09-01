@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
-const constants = require('./constants');
+const config = require('../config');
 
 const bookingSchema = new mongoose.Schema(
   {
     event: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: constants.EVENT_MODEL_NAME,
+      ref: config.EVENT_MODEL_NAME,
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: constants.USER_MODEL_NAME,
+      ref: config.USER_MODEL_NAME,
     },
   },
   {
@@ -17,4 +17,4 @@ const bookingSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model(constants.BOOKING_MODEL_NAME, bookingSchema);
+module.exports = mongoose.model(config.BOOKING_MODEL_NAME, bookingSchema);

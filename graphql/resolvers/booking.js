@@ -3,7 +3,11 @@ const BookingModel = require('../../models/booking');
 const { makeEvent, makeBooking } = require('./utils');
 
 module.exports = {
-  bookings: async () => {
+  bookings: async (_, req) => {
+    if (!req.isAuthenticated) {
+      throw new Error('Unauthenticated!');
+    }
+
     try {
       const bookings = await BookingModel.find();
       return bookings.map(makeBooking);
@@ -12,14 +16,18 @@ module.exports = {
     }
   },
 
-  createBooking: async (args) => {
+  createBooking: async (args, req) => {
+    if (!req.isAuthenticated) {
+      throw new Error('Unauthenticated!');
+    }
+
     try {
       const event = await EventModel.findOne({
         _id: args.eventId,
       });
 
       const booking = await new BookingModel({
-        user: '5f465dedac36aa458246314b',
+        user: req.userId,
         event,
       }).save();
 
@@ -29,7 +37,11 @@ module.exports = {
     }
   },
 
-  cancelBooking: async (args) => {
+  cancelBooking: async (args, req) => {
+    if (!req.isAuthenticated) {
+      throw new Error('Unauthenticated!');
+    }
+
     try {
       const booking = await BookingModel.findOne({
         _id: args.bookingId,
