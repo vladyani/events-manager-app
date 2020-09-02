@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "bootstrap": "lerna exec npm install",
+    "start": "lerna exec npm run start"
+  },
+  "devDependencies": {
+    "lerna": "2.11.0"
+  }
+}
